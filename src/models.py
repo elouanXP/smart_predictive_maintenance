@@ -77,8 +77,14 @@ def plot_importance(model, X):
     plt.show()
     plt.close()
     
-def remove_low_importance (model, X_train, X_test, top_n=15):
-    top_imp_features = get_feature_importance(model,X_train)[:top_n].index
-    X_train_imp = X_train[top_imp_features]
-    X_test_imp = X_test[top_imp_features]
-    return X_train_imp, X_test_imp
+def select_top_features(model, X, top_n=15):
+    imp = get_feature_importance(model, X)
+    cols = imp.index[:top_n]
+    return cols
+
+def evaluate_model(model, X_train, X_test, y_train, y_test, df, unit, features, scaler, name):
+    fig, axes = plt.subplots(1, 2, figsize=(14,5))
+    plot_metrics_model(model, X_train, X_test, y_train, y_test, name, axes[0])
+    plot_unit_model(model, df, unit, features, scaler, name, axes[1])
+    plt.tight_layout()
+    plt.show()
