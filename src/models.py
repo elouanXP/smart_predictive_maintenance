@@ -1,6 +1,7 @@
 import numpy as np # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score # type: ignore
+import pandas as pd # type: ignore
 
 
 class Baseline:
@@ -63,3 +64,21 @@ def plot_unit_model(model, df, unit, features, scaler=None, name="Model", ax=Non
     ax.set_title(f'{name} Unit {unit}')
     ax.legend()
     ax.grid()
+    
+def get_feature_importance(model, X):
+    importances = model.feature_importances_
+    return pd.Series(importances, index=X.columns).sort_values(ascending=False)
+    
+    
+def plot_importance(model, X):
+    feature_imp = get_feature_importance(model, X)
+    feature_imp.plot(kind='barh')
+    plt.grid()
+    plt.show()
+    plt.close()
+    
+def remove_low_importance (model, X_train, X_test, top_n=15):
+    top_imp_features = get_feature_importance(model,X_train)[:top_n].index
+    X_train_imp = X_train[top_imp_features]
+    X_test_imp = X_test[top_imp_features]
+    return X_train_imp, X_test_imp
