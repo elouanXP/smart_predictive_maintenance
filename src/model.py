@@ -275,7 +275,7 @@ def get_feature_importance(model, X):
     return pd.Series(importances, index=X.columns).sort_values(ascending=False)
     
     
-def plot_importance(model, X):
+def plot_importance(model, X, save_path=None):
     """
     Plot feature importances for tree-based models.
 
@@ -285,10 +285,14 @@ def plot_importance(model, X):
         Model with attribute `feature_importances_`.
     X : pd.DataFrame
         Feature dataframe.
+    save_path : str
+        Path to save model plots
     """
     feature_imp = get_feature_importance(model, X)
     feature_imp.plot(kind='barh')
     plt.grid()
+    if save_path is not None:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
     plt.show()
     plt.close()
     
@@ -356,7 +360,7 @@ def evaluate_model(
         Optional scaler used for normalization.
     name : str
         Model name.
-    save_path :
+    save_path : str
         Path to save model plots
     Returns
     -------

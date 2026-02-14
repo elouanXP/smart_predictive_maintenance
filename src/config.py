@@ -9,6 +9,8 @@ DATA_PROCESSED = ROOT /"data"/"processed"
 OUTPUTS_PLOTS = ROOT/"outputs"/"plots"
 OUTPUTS_MODELS = ROOT/"outputs"/"models"
 
+DATASET = "FD001"
+
 CLIP_RUL = 120
 VAR_THRESHOLD= 1e-5
 WINDOW = 5
