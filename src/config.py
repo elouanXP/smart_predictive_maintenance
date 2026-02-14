@@ -1,5 +1,5 @@
 ZIP_PATH = '../data/raw/CMAPSSdata.zip'
-DATA_RAW = '../data/raw/train_FD001.txt'
+DATA_RAW = '../data/raw'
 DATA_PROCESSED = '../data/processed'
 OUTPUTS_PLOTS = "outputs/plots/"
 OUTPUTS_MODELS = "outputs/models/"
