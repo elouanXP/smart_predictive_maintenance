@@ -10,7 +10,8 @@ import mlflow.sklearn
 import pandas as pd
 from src.config import (
     RANDOM_STATE, 
-    TEST_SIZE
+    TEST_SIZE,
+    ROOT
 )
 
 
@@ -429,6 +430,7 @@ def run_experiment(
         Dictionary containing evaluation metrics (RMSE, MAE, R² for train and test sets).
     """
 
+    mlflow.set_tracking_uri((ROOT/'mlruns').as_uri())
     mlflow.set_experiment(experiment_name)
 
     with mlflow.start_run(run_name=run_name):
