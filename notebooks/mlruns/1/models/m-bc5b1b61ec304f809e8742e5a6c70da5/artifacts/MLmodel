@@ -1,0 +1,23 @@
+artifact_path: file:c:/Users/eloua/OneDrive/Bureau/smart_predictive_maintenance/notebooks/mlruns/1/models/m-bc5b1b61ec304f809e8742e5a6c70da5/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.10
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.9.0
+model_id: m-bc5b1b61ec304f809e8742e5a6c70da5
+model_size_bytes: 84521862
+model_uuid: m-bc5b1b61ec304f809e8742e5a6c70da5
+prompts: null
+run_id: 0aef4753c410462ab17e2f46924c3403
+utc_time_created: '2026-02-14 23:53:05.536263'

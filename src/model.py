@@ -4,6 +4,9 @@ from typing import Tuple
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.base import BaseEstimator, RegressorMixin
+import mlflow
+import mlflow.sklearn
 import pandas as pd
 from src.config import (
     RANDOM_STATE, 
@@ -118,7 +121,7 @@ def prepare_data(
     return X_train, X_train_scaled, X_test, X_test_scaled, y_train, y_test, scaler
 
 
-class Baseline:
+class Baseline(BaseEstimator, RegressorMixin):
     """
     Reference model predicting the mean of the training target.
     """
@@ -328,9 +331,9 @@ def evaluate_model(
     y_test, 
     df, 
     unit, 
-    features, 
-    scaler, 
+    features,
     name,
+    scaler=None, 
     save_path=None
 ) -> dict:
     
@@ -356,7 +359,7 @@ def evaluate_model(
         Unit identifier to visualize.
     features : list
         Feature column names used by the model.
-    scaler : fitted scaler or None
+    scaler : default = None
         Optional scaler used for normalization.
     name : str
         Model name.
@@ -366,7 +369,6 @@ def evaluate_model(
     -------
     dict
         Dictionary containing RMSE, MAE and R² for train and test sets.
-        Keys: rmse_train, rmse_test, mae_train, mae_test, r2_train, r2_test.
     """
     fig, axes = plt.subplots(1, 2, figsize=(14,5))
     metrics=plot_metrics_model(model, X_train, X_test, y_train, y_test, name, axes[0])
@@ -376,4 +378,78 @@ def evaluate_model(
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
     plt.show()
     plt.close()
+    return metrics
+
+
+def run_experiment(
+    experiment_name: str,
+    run_name: str,
+    pipeline,
+    X_train: pd.DataFrame,
+    X_test: pd.DataFrame,
+    y_train: pd.Series,
+    y_test: pd.Series,
+    df: pd.DataFrame,
+    unit: int,
+    features: list,
+    save_path: None
+) -> dict:
+    """
+    Train a pipeline, log parameters and metrics to MLflow,
+    and return evaluation metrics.
+
+    Parameters
+    ----------
+    experiment_name : str
+        Name of the MLflow experiment (groups multiple runs).
+    run_name : str
+        Name of the individual run.
+    pipeline : sklearn.pipeline.Pipeline
+        Pipeline containing preprocessing steps and model.
+    X_train : pd.DataFrame
+        Training features (unscaled)
+    X_test : pd.DataFrame
+        Testing features (unscaled)
+    y_train : pd.Series
+        Training target values.
+    y_test : pd.Series
+        Testing target values.
+    df : pd.DataFrame
+        Full dataset used for visualization purposes.
+    unit : int
+        Unit identifier to visualize.
+    features : list of str
+        Feature columns used by the model.
+    save_path : str
+        Path to save model plots.
+
+    Returns
+    -------
+    dict
+        Dictionary containing evaluation metrics (RMSE, MAE, R² for train and test sets).
+    """
+
+    mlflow.set_experiment(experiment_name)
+
+    with mlflow.start_run(run_name=run_name):
+
+        pipeline.fit(X_train, y_train)
+
+        metrics = evaluate_model(
+            model=pipeline,
+            X_train=X_train,
+            X_test=X_test,
+            y_train=y_train,
+            y_test=y_test,
+            df=df,
+            unit=unit,
+            features=features,
+            name=run_name,
+            save_path=save_path
+        )
+
+        mlflow.log_params(pipeline.get_params())
+        mlflow.log_metrics(metrics)
+        mlflow.sklearn.log_model(pipeline, name="pipeline")
+
     return metrics
