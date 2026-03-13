@@ -29,7 +29,7 @@ NASA Benchmark (Random Forest Tuned - full train) = RMSE = 17.34 · MAE = 12.10 
 ## Project Structure
 
 ```
-smart_predictive_maintenance/
+turbofan-rul-prediction/
 │
 ├── data/
 │   ├── raw/                  # Original NASA CMAPSS files
